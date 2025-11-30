@@ -74,4 +74,60 @@ public class CylinderRepository : ICylinderRepository
 
         return cylinder.Id;
     }
+
+    /// <summary>
+    /// Updates an existing Cylinder entity in the repository.
+    /// </summary>
+    /// <param name="cylinder">The Cylinder entity with updated values.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result contains true if the update was successful, false if the cylinder was not found.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when cylinder is null.</exception>
+    public async Task<bool> Update(Cylinder cylinder)
+    {
+        if (cylinder == null)
+        {
+            throw new ArgumentNullException(nameof(cylinder));
+        }
+
+        var existingCylinder = await _context.Cylinders
+            .FirstOrDefaultAsync(c => c.Id == cylinder.Id);
+
+        if (existingCylinder == null)
+        {
+            return false;
+        }
+
+        existingCylinder.Radius = cylinder.Radius;
+        existingCylinder.Height = cylinder.Height;
+        _context.Cylinders.Update(existingCylinder);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    /// <summary>
+    /// Deletes a Cylinder entity from the repository.
+    /// </summary>
+    /// <param name="id">The unique identifier of the Cylinder to delete.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result contains true if the deletion was successful, false if the cylinder was not found.
+    /// </returns>
+    public async Task<bool> Delete(Guid id)
+    {
+        var cylinderDBO = await _context.Cylinders
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (cylinderDBO == null)
+        {
+            return false;
+        }
+
+        _context.Cylinders.Remove(cylinderDBO);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
 }

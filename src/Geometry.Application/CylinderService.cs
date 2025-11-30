@@ -20,4 +20,14 @@ public class CylinderService
     {
         return await _cylinderRepository.ReadById(id);
     }
+
+    public async Task<bool> Update(Cylinder cylinder)
+    {
+        return await _cylinderRepository.Update(cylinder);
+    }
+
+    public async Task<bool> Delete(Guid id)
+    {
+        return await _cylinderRepository.Delete(id);
+    }
 }

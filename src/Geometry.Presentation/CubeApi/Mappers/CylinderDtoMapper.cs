@@ -47,4 +47,22 @@ public static class CylinderDtoMapper
 
         return new Cylinder(Guid.NewGuid(), request.Radius, request.Height);
     }
+
+    /// <summary>
+    /// Converts an UpdateCylinderRequest DTO to a Cylinder domain entity with a specified Id.
+    /// </summary>
+    /// <param name="id">The unique identifier of the cylinder to update.</param>
+    /// <param name="request">The UpdateCylinderRequest DTO to convert. Cannot be null.</param>
+    /// <returns>A Cylinder domain entity with the specified id, radius and height.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when request is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when Radius or Height is less than or equal to 0.</exception>
+    public static Cylinder ToDomain(Guid id, UpdateCylinderRequest request)
+    {
+        if (request == null)
+        {
+            throw new ArgumentNullException(nameof(request));
+        }
+
+        return new Cylinder(id, request.Radius, request.Height);
+    }
 }

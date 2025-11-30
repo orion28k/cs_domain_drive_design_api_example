@@ -18,4 +18,18 @@ public interface ICylinderRepository
     /// </summary>
     /// <param name="cylinder">The Cylinder entity to save or update.</param>
     Task<Guid> Insert(Cylinder cylinder);
+
+    /// <summary>
+    /// Updates an existing Cylinder entity in the repository.
+    /// </summary>
+    /// <param name="cylinder">The Cylinder entity with updated values.</param>
+    /// <returns>True if the update was successful, false if the cylinder was not found.</returns>
+    Task<bool> Update(Cylinder cylinder);
+
+    /// <summary>
+    /// Deletes a Cylinder entity from the repository.
+    /// </summary>
+    /// <param name="id">The unique identifier of the Cylinder to delete.</param>
+    /// <returns>True if the deletion was successful, false if the cylinder was not found.</returns>
+    Task<bool> Delete(Guid id);
 }
