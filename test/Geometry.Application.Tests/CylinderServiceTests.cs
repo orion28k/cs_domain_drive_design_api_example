@@ -57,6 +57,57 @@ public class MockCylinderRepository : ICylinderRepository
 public class CylinderServiceTests
 {
     [Fact]
+    public void Constructor_WithNullRepository_ShouldCreateInstance()
+    {
+        // Arrange
+        ICylinderRepository repository = null!;
+
+        // Act
+        var service = new CylinderService(repository);
+
+        // Assert
+        Assert.NotNull(service);
+        // Note: Methods will throw NullReferenceException if repository is null
+    }
+
+    [Fact]
+    public async Task Insert_WithNullRepository_ShouldThrowNullReferenceException()
+    {
+        // Arrange
+        ICylinderRepository repository = null!;
+        var service = new CylinderService(repository);
+        var cylinder = new Cylinder(Guid.NewGuid(), 3.5, 10.0);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NullReferenceException>(() => service.Insert(cylinder));
+    }
+
+    [Fact]
+    public async Task ReadById_WithNullRepository_ShouldThrowNullReferenceException()
+    {
+        // Arrange
+        ICylinderRepository repository = null!;
+        var service = new CylinderService(repository);
+        var id = Guid.NewGuid();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NullReferenceException>(() => service.ReadById(id));
+    }
+
+    [Fact]
+    public void Constructor_WithValidRepository_ShouldCreateInstance()
+    {
+        // Arrange
+        var repository = new MockCylinderRepository();
+
+        // Act
+        var service = new CylinderService(repository);
+
+        // Assert
+        Assert.NotNull(service);
+    }
+
+    [Fact]
     public async Task Insert_WithValidCylinder_ShouldReturnId()
     {
         // Arrange
@@ -175,5 +226,44 @@ public class CylinderServiceTests
 
         // Assert
         Assert.False(result);
+    }
+
+    [Fact]
+    public async Task Insert_ThenReadById_ShouldReturnInsertedCylinder()
+    {
+        // Arrange
+        var repository = new MockCylinderRepository();
+        var service = new CylinderService(repository);
+        var id = Guid.NewGuid();
+        var cylinder = new Cylinder(id, 4.5, 12.0);
+
+        // Act
+        await service.Insert(cylinder);
+        var result = await service.ReadById(id);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(id, result.Id);
+        Assert.Equal(4.5, result.Radius);
+        Assert.Equal(12.0, result.Height);
+    }
+
+    [Fact]
+    public async Task MultipleInserts_ShouldDelegateToRepositoryEachTime()
+    {
+        // Arrange
+        var repository = new MockCylinderRepository();
+        var service = new CylinderService(repository);
+        var cylinder1 = new Cylinder(Guid.NewGuid(), 2.0, 5.0);
+        var cylinder2 = new Cylinder(Guid.NewGuid(), 3.5, 10.0);
+        var cylinder3 = new Cylinder(Guid.NewGuid(), 5.0, 15.0);
+
+        // Act
+        await service.Insert(cylinder1);
+        await service.Insert(cylinder2);
+        await service.Insert(cylinder3);
+
+        // Assert
+        Assert.Equal(3, repository.InsertCallCount);
     }
 }

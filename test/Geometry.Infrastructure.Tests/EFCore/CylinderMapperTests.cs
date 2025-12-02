@@ -84,4 +84,54 @@ public class CylinderMapperTests
         Assert.Equal(originalCylinder.Radius, resultCylinder.Radius);
         Assert.Equal(originalCylinder.Height, resultCylinder.Height);
     }
+
+    [Fact]
+    public void ToDomain_ThenToDBO_ShouldRoundTripCorrectly()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var radius = 6.0;
+        var height = 18.0;
+        var originalCylinderDBO = new CylinderDBO
+        {
+            Id = id,
+            Radius = radius,
+            Height = height
+        };
+
+        // Act
+        var cylinder = CylinderMapper.ToDomain(originalCylinderDBO);
+        var roundTrippedCylinderDBO = CylinderMapper.ToDBO(cylinder);
+
+        // Assert
+        Assert.Equal(originalCylinderDBO.Id, roundTrippedCylinderDBO.Id);
+        Assert.Equal(originalCylinderDBO.Radius, roundTrippedCylinderDBO.Radius);
+        Assert.Equal(originalCylinderDBO.Height, roundTrippedCylinderDBO.Height);
+    }
+
+    [Fact]
+    public void ToDBO_WithDifferentRadiusAndHeight_ShouldMapCorrectly()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var testValues = new[] 
+        { 
+            (radius: 1.0, height: 2.0),
+            (radius: 2.5, height: 5.0),
+            (radius: 5.0, height: 10.0),
+            (radius: 10.0, height: 20.0)
+        };
+
+        foreach (var (radius, height) in testValues)
+        {
+            var cylinder = new Cylinder(id, radius, height);
+
+            // Act
+            var cylinderDBO = CylinderMapper.ToDBO(cylinder);
+
+            // Assert
+            Assert.Equal(radius, cylinderDBO.Radius);
+            Assert.Equal(height, cylinderDBO.Height);
+        }
+    }
 }

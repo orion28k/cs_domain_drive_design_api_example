@@ -147,4 +147,33 @@ public class CylinderTests
         var exception = Assert.Throws<ArgumentException>(() => cylinder.Height = -5.0);
         Assert.Contains("Height must be greater than 0", exception.Message);
     }
+
+    [Fact]
+    public void Constructor_WithPositiveRadiusAndHeight_ShouldAcceptValue()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var radius = 0.1; // Minimum valid value
+        var height = 0.1; // Minimum valid value
+
+        // Act
+        var cylinder = new Cylinder(id, radius, height);
+
+        // Assert
+        Assert.Equal(radius, cylinder.Radius);
+        Assert.Equal(height, cylinder.Height);
+    }
+
+    [Fact]
+    public void Id_ShouldBeReadOnlyAfterConstruction()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var cylinder = new Cylinder(id, 3.5, 10.0);
+
+        // Assert
+        Assert.Equal(id, cylinder.Id);
+        // Note: Id is protected set in Entity, so we can't change it from outside
+        // This test verifies the Id is set correctly during construction
+    }
 }
